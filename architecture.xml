@@ -1,0 +1,141 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.8 Chrome/140.0.7339.240 Electron/38.4.0 Safari/537.36" version="28.2.8">
+  <diagram name="Password Manager Architecture" id="architecture">
+    <mxGraphModel dx="1303" dy="903" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="TUI Password Manager - Hexagonal Architecture with OPAQUE Protocol" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="400" y="20" width="600" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="core" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=3;size=40;" parent="1" vertex="1">
+          <mxGeometry x="500" y="280" width="400" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="core_label" value="&lt;b&gt;CORE DOMAIN&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Vault Management&lt;br&gt;• Entry CRUD Operations&lt;br&gt;• Password Generation&lt;br&gt;• Encryption Logic&lt;br&gt;• OPAQUE Protocol&lt;br&gt;• Business Rules" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="600" y="380" width="200" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="tui" value="&lt;b&gt;TUI Adapter&lt;/b&gt;&lt;br&gt;(Primary/Driving)&lt;br&gt;&lt;br&gt;• Terminal Interface&lt;br&gt;• User Input Handling&lt;br&gt;• Command Processing&lt;br&gt;• Display Rendering&lt;br&gt;• Keyboard Shortcuts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=center;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="620" y="90" width="160" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="tui_arrow" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;strokeWidth=2;" parent="1" source="tui" target="core" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="690" y="400" as="sourcePoint" />
+            <mxPoint x="740" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tui_label" value="Commands" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="tui_arrow" vertex="1" connectable="0">
+          <mxGeometry x="-0.2" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vault_port" value="&lt;b&gt;Vault Repository&lt;/b&gt;&lt;br&gt;(Port/Trait)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;dashed=1;dashPattern=5 5;" parent="1" vertex="1">
+          <mxGeometry x="710" y="300" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="opaque_adapter" value="&lt;b&gt;OPAQUE Client&lt;/b&gt;&lt;br&gt;(Secondary/Driven)&lt;br&gt;&lt;br&gt;• Protocol Implementation&lt;br&gt;• Key Exchange&lt;br&gt;• HTTP Client&lt;br&gt;• Server Communication" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=center;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="1100" y="340" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="opaque_arrow" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="opaque_adapter" target="vault_port" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1010" y="250" as="sourcePoint" />
+            <mxPoint x="970" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="opaque_label" value="Managing Vault" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=none;" parent="opaque_arrow" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint y="-24" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="crypto_port" value="&lt;b&gt;Cryptography Service&lt;/b&gt;&lt;br&gt;(Port/Trait)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;dashed=1;dashPattern=5 5;" vertex="1" parent="1">
+          <mxGeometry x="710" y="520" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="crypto" value="&lt;b&gt;Cryptography&lt;/b&gt;&lt;br&gt;(Secondary/Driven)&lt;br&gt;&lt;br&gt;• Master Password Encryption&lt;br&gt;• Vault Encryption&lt;br&gt;• Key Derivation&lt;br&gt;• Password File Crypto" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=center;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="690" y="705" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="crypto_arrow" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=2;" parent="1" source="crypto" target="crypto_port" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="780" y="760" as="sourcePoint" />
+            <mxPoint x="740" y="760" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="crypto_label" value="Managing cryptography" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=none;" parent="crypto_arrow" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint x="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="password_gen_port" value="&lt;b&gt;Password Generator&lt;/b&gt;&lt;br&gt;(Port/Trait)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;dashed=1;dashPattern=5 5;" vertex="1" parent="1">
+          <mxGeometry x="550" y="520" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="password_gen" value="&lt;b&gt;Password Generator&lt;/b&gt;&lt;br&gt;(Secondary/Driven)&lt;br&gt;&lt;br&gt;• Random Generation&lt;br&gt;• Character Requirements&lt;br&gt;• Strength Validation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=center;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="340" y="700" width="180" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="password_gen_arrow" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="password_gen" target="password_gen_port" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="380" as="sourcePoint" />
+            <mxPoint x="500" y="700" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fz-aIGxXqCyRgiIhJ3oT-5" value="Managing Password" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=none;" vertex="1" connectable="0" parent="password_gen_arrow">
+          <mxGeometry x="-0.1145" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="server" value="&lt;b&gt;Rust Web Server&lt;/b&gt;&lt;br&gt;&lt;br&gt;• OPAQUE Protocol Server&lt;br&gt;• Encrypted Vault Storage&lt;br&gt;• Password File Storage&lt;br&gt;• Zero-Knowledge&lt;br&gt;• Never sees plaintext" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=center;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="1100" y="520" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="server_arrow" value="OPAQUE Protocol" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#cc0000;" parent="1" source="opaque_adapter" target="server" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1100" y="500" as="sourcePoint" />
+            <mxPoint x="1150" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="security_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#CC0000;strokeWidth=2;dashed=1;dashPattern=8 8;" parent="1" vertex="1">
+          <mxGeometry x="1080" y="320" width="220" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="security_label" value="&lt;b&gt;ZERO-KNOWLEDGE SECURITY BOUNDARY&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#CC0000;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="1090" y="280" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="data_storage" value="&lt;b&gt;Stored Data&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Encrypted Vault&lt;br&gt;• Encrypted Password File&lt;br&gt;  - User keypair&lt;br&gt;  - Server public key&lt;br&gt;  - Encryption key" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=center;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="1100" y="700" width="180" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="storage_arrow" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;dashed=1;" parent="1" source="server" target="data_storage" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1100" y="700" as="sourcePoint" />
+            <mxPoint x="1150" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="user_label" value="User" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="670" y="70" width="60" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="170" y="80" width="240" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_title" value="&lt;b&gt;Legend&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="170" y="80" width="240" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend1" value="Primary Adapter (Driving)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="180" y="115" width="220" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="legend2" value="Secondary Adapter (Driven)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="180" y="145" width="220" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="legend3" value="Core Domain" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="180" y="175" width="220" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="legend4" value="Port/Trait Interface" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="180" y="205" width="220" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="legend5" value="External System" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="180" y="235" width="220" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="notes_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="170" y="300" width="240" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="notes_title" value="&lt;b&gt;Key Principles&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="170" y="300" width="240" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="notes_text" value="• Hexagonal Architecture&lt;br&gt;• Core domain is isolated&lt;br&gt;• Ports define contracts&lt;br&gt;• Adapters implement ports&lt;br&gt;• Zero-knowledge security&lt;br&gt;• OPAQUE protocol ensures&lt;br&gt;  server never sees password&lt;br&gt;• Master password encrypts&lt;br&gt;  password file&lt;br&gt;• Encryption key encrypts vault" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="180" y="330" width="220" height="160" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
