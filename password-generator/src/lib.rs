@@ -26,7 +26,7 @@ impl PasswordGenerator for SecurePasswordGenerator {
         let mut rng = rand::rng();
 
         let mut password_charset = Vec::new();
-        let mut password = Vec::new();
+        let mut password = Vec::with_capacity(restrictions.length);
 
         let mut count = 0;
 

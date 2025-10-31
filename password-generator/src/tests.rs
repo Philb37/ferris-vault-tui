@@ -1,1 +1,1 @@
-pub mod password_generator_tests;
+mod password_generator_tests;
