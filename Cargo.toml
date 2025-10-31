@@ -3,4 +3,14 @@ name = "ferris-vault-tui"
 version = "0.1.0"
 edition = "2024"
 
-[dependencies]
+[[bin]]
+name = "tui"
+path = "tui/src/main.rs"
+
+[workspace]
+members = [
+    "tui",
+    "core", 
+    "cryptography", 
+    "password-generator",
+]
