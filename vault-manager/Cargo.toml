@@ -1,0 +1,10 @@
+[package]
+name = "vault-manager"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+core = { path = "../core" }
+opaque-ke = { version = "4.0.0", features = ["argon2", "std"] }
+rand = "0.8"
+sha2 = "0.10.9"

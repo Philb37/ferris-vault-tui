@@ -12,5 +12,6 @@ members = [
     "tui",
     "core", 
     "cryptography", 
-    "password-generator",
+    "password-generator", 
+    "vault-manager",
 ]
