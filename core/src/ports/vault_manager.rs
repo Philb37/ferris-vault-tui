@@ -1,10 +1,11 @@
 pub trait VaultManager {
-    fn create(username: &str, password: &str) -> Result<Vault, String>;
-    fn retrieve(username: &str) -> Result<Vault, String>;
-    fn save(vault: Vault);
+    fn create(&self, username: &str, password: &str) -> Result<Vault, String>;
+    fn retrieve(&self, username: &str) -> Result<Vault, String>;
+    fn save(&self, vault: Vault);
 }
 
 pub struct Vault {
-    username: String,
-    content: Vec<u8>
+    pub username: String,
+    pub content: Vec<u8>,
+    pub decryption_key: Vec<u8>
 }

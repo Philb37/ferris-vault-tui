@@ -7,4 +7,5 @@ edition = "2024"
 core = { path = "../core" }
 opaque-ke = { version = "4.0.0", features = ["argon2", "std"] }
 rand = "0.8"
+reqwest = { version = "0.12.24", features = ["blocking", "rustls-tls-webpki-roots"] }
 sha2 = "0.10.9"

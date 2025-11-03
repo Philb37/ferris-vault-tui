@@ -3,10 +3,14 @@ use core::ports::vault_manager::{
     Vault
 };
 use opaque_ke::{
-    argon2::Argon2, generic_array::GenericArray, rand::rngs::OsRng, CipherSuite, ClientRegistration, ClientRegistrationFinishParameters, RegistrationResponse, ServerRegistration
+    argon2::Argon2, rand::rngs::OsRng, CipherSuite, ClientRegistration, ClientRegistrationFinishParameters, RegistrationResponse, ServerRegistration
 };
+use reqwest::blocking::Client;
 
-pub struct OpaqueVaultManager;
+pub struct OpaqueVaultManager {
+    client: Client,
+    server_url: String
+}
 
 /// Standard Cipher Suite for the vault-manager
 /// Using Ristretto255 as an Oprf and. Triple Diffie Hellman for key exchange algorithm and sha512 for hashing
@@ -21,11 +25,17 @@ impl CipherSuite for StandardCipherSuite {
 
 impl OpaqueVaultManager {
 
+    pub fn new(server_url: String) -> Self {
+        Self {
+            client: Client::new(),
+            server_url
+        }
+    }
 }
 
 impl VaultManager for OpaqueVaultManager {
 
-    fn create(username: &str, password: &str) -> Result<Vault, String> {
+    fn create(&self, username: &str, password: &str) -> Result<Vault, String> {
 
         let mut client_rng = OsRng;
 
@@ -35,9 +45,17 @@ impl VaultManager for OpaqueVaultManager {
 
         let registration_request = client_registration_start_result.message.serialize();
 
-        // send to server todo!()
- 
-        let server_registration_response = RegistrationResponse::deserialize(&[1]).map_err(|protocol_error| protocol_error.to_string())?;
+        let registration_response_bytes = self.client
+            .post(format!("{}/opaque/registration/start", self.server_url))
+            .header("Content-Type", "application/octet-stream")
+            .body(registration_request.to_vec())
+            .send()
+            .map_err(|error| error.to_string())?;
+
+        // todo!() replace &[1] with registration_response_bytes content
+        let server_registration_response = 
+            RegistrationResponse::deserialize(&[1])
+            .map_err(|protocol_error| protocol_error.to_string())?;
 
         let client_registration_finish_result = client_registration_start_result
             .state
@@ -49,16 +67,20 @@ impl VaultManager for OpaqueVaultManager {
             )
             .map_err(|protocol_error| protocol_error.to_string())?;
 
-        
+        Ok(
+            Vault {
+                username: String::from(username),
+                content: vec!(1), // todo!()
+                decryption_key: client_registration_finish_result.export_key.to_vec()
+            }
+        )
+    }
 
+    fn retrieve(&self, username: &str) -> Result<Vault, String> {
         todo!()
     }
 
-    fn retrieve(username: &str) -> Result<Vault, String> {
-        todo!()
-    }
-
-    fn save(vault: Vault) {
+    fn save(&self, vault: Vault) {
         todo!()
     }
 }
