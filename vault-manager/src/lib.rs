@@ -2,85 +2,76 @@ use core::ports::vault_manager::{
     VaultManager,
     Vault
 };
-use opaque_ke::{
-    argon2::Argon2, rand::rngs::OsRng, CipherSuite, ClientRegistration, ClientRegistrationFinishParameters, RegistrationResponse, ServerRegistration
-};
-use reqwest::blocking::Client;
+use opaque::OpaqueService;
+
+mod opaque;
+mod http_utils;
+mod webclient;
+mod constants;
+
+// Error constants
+const CANNOT_SAVE_VAULT_IF_NOT_LOGGED_IN: &'static str = "Cannot create a new vault if you are already logged in.";
+const CANNOT_CREATE_VAULT_IF_LOGGED_IN:   &'static str = "Cannot save a vault if you are not logged in.";
 
 pub struct OpaqueVaultManager {
-    client: Client,
-    server_url: String
-}
-
-/// Standard Cipher Suite for the vault-manager
-/// Using Ristretto255 as an Oprf and. Triple Diffie Hellman for key exchange algorithm and sha512 for hashing
-/// And Argon2 (default parameters, argon2id) as a key derivation
-struct StandardCipherSuite;
-
-impl CipherSuite for StandardCipherSuite {
-    type OprfCs = opaque_ke::Ristretto255;
-    type KeyExchange = opaque_ke::TripleDh<opaque_ke::Ristretto255, sha2::Sha512>;
-    type Ksf = Argon2<'static>;
+    opaque_service: OpaqueService,
+    logged_in: bool
 }
 
 impl OpaqueVaultManager {
 
     pub fn new(server_url: String) -> Self {
         Self {
-            client: Client::new(),
-            server_url
+            opaque_service: OpaqueService::new(server_url),
+            logged_in: false
         }
     }
 }
 
 impl VaultManager for OpaqueVaultManager {
 
-    fn create(&self, username: &str, password: &str) -> Result<Vault, String> {
+    fn create(&mut self, username: &str, password: &str) -> Result<Vault, String> {
 
-        let mut client_rng = OsRng;
+        // For now there is no feature to handle multiple vault at the same time
+        if self.logged_in {
+            return Err(CANNOT_CREATE_VAULT_IF_LOGGED_IN.to_string());
+        }
 
-        let client_registration_start_result =
-            ClientRegistration::<StandardCipherSuite>::start(&mut client_rng, password.as_bytes())
-            .map_err(|protocol_error| protocol_error.to_string())?;
+        self.opaque_service.register(username, password)?;
+        self.opaque_service.login(username, password)?;
 
-        let registration_request = client_registration_start_result.message.serialize();
+        let vault_content = self.opaque_service.get_vault()?;
 
-        let registration_response_bytes = self.client
-            .post(format!("{}/opaque/registration/start", self.server_url))
-            .header("Content-Type", "application/octet-stream")
-            .body(registration_request.to_vec())
-            .send()
-            .map_err(|error| error.to_string())?;
+        let decryption_key = match self.opaque_service.get_export_key() {
+            Some(key) => key,
+            None => return Err("No export key found after login.".to_string())
+        };
 
-        // todo!() replace &[1] with registration_response_bytes content
-        let server_registration_response = 
-            RegistrationResponse::deserialize(&[1])
-            .map_err(|protocol_error| protocol_error.to_string())?;
-
-        let client_registration_finish_result = client_registration_start_result
-            .state
-            .finish(
-                &mut client_rng, 
-                password.as_bytes(), 
-                server_registration_response, 
-                ClientRegistrationFinishParameters::default()
-            )
-            .map_err(|protocol_error| protocol_error.to_string())?;
-
-        Ok(
-            Vault {
-                username: String::from(username),
-                content: vec!(1), // todo!()
-                decryption_key: client_registration_finish_result.export_key.to_vec()
-            }
-        )
+        Ok(Vault::new(String::from(username), vault_content, decryption_key))
     }
 
-    fn retrieve(&self, username: &str) -> Result<Vault, String> {
-        todo!()
+    fn retrieve(&mut self, username: &str, password: &str) -> Result<Vault, String> {
+
+        if !self.logged_in {
+            self.opaque_service.login(username, password)?;
+        }
+
+        let vault_content = self.opaque_service.get_vault()?;
+
+        let decryption_key = match self.opaque_service.get_export_key() {
+            Some(key) => key,
+            None => return Err("No export key found after login.".to_string())
+        };
+
+        Ok(Vault::new(String::from(username), vault_content, decryption_key))
     }
 
-    fn save(&self, vault: Vault) {
+    fn save(&self, vault: Vault) -> Result<(), String> {
+        
+        if !self.logged_in {
+            return Err("".to_string());
+        }
+
         todo!()
     }
 }
