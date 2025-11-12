@@ -65,7 +65,7 @@ impl OpaqueService {
                 .map_err(|protocol_error| protocol_error.to_string())?;
 
         let registration_response = self.web_client.web_server_request(
-            &format!("{}{}", &self.server_url, "/opaque/registration/start"),
+            format!("{}{}", &self.server_url, "/opaque/registration/start"),
             POST,
             Some(construct_body(username, &client_registration_start_result.message.serialize())),
             get_default_headers(),
@@ -95,7 +95,7 @@ impl OpaqueService {
         ));
 
         let _ = self.web_client.web_server_request(
-            &format!("{}{}", &self.server_url, "/opaque/registration/finish"),
+            format!("{}{}", &self.server_url, "/opaque/registration/finish"),
             POST,
             Some(construct_body(username, &client_registration_finish_result.message.serialize())),
             get_default_headers(),
@@ -113,7 +113,7 @@ impl OpaqueService {
             .map_err(|protocol_error| protocol_error.to_string())?;
 
         let login_response = self.web_client.web_server_request(
-            &format!("{}{}", &self.server_url, "/opaque/login/start"),
+            format!("{}{}", &self.server_url, "/opaque/login/start"),
             POST,
             Some(construct_body(username, &client_login_start_result.message.serialize())),
             get_default_headers(),
@@ -143,7 +143,7 @@ impl OpaqueService {
         ));
 
         let _ = self.web_client.web_server_request(
-            &format!("{}{}", &self.server_url, "/opaque/login/finish"),
+            format!("{}{}", &self.server_url, "/opaque/login/finish"),
             POST,
             Some(construct_body(username, &client_login_finish_result.message.serialize())),
             get_default_headers(),
@@ -157,37 +157,30 @@ impl OpaqueService {
 
     pub fn get_vault(&self) -> Result<Vec<u8>, String> {
 
-        let uri = format!("{}{}", &self.server_url, "/vault");
+        let Some(vault) = self.vault_request( GET, None)? else {
+            return Err("The GET vault had no body.".to_string());
+        };
 
-        if let None = self.session {
-            return Err("No session after loggin.".to_string());
-        }
+        Ok(vault)
+    }
 
-        let session = self.session.as_ref().unwrap();
+    pub fn save_vault(&self, content: Vec<u8>) -> Result<(), String> {
 
-        let headers = get_vault_request_headers(&session.session_key, &uri)
-            .map_err(|error| error.to_string())?;
+        let _ = self.vault_request(POST, Some(content))?;
 
-        let bearer_token = str::from_utf8(&session.session_token)
-            .map_err(|error| error.to_string())?;
-
-        let vault_response = self.web_client.web_server_request(
-            &uri, 
-            GET, 
-            None, 
-            headers, 
-            Some(bearer_token.to_string())
-        )?;
-
-        let vault_reponse_bytes = vault_response
-            .bytes()
-            .map_err(|error| error.to_string())?;
-
-        Ok(vault_reponse_bytes.to_vec())
+        Ok(())
     }
 
     pub fn get_export_key(&mut self) -> Option<Key> {
         self.export_key.take()
+    }
+
+    pub fn is_logged_in(&self) -> bool {
+
+        match self.session {
+            Some(_) => true,
+            None => false
+        }
     }
 
     fn create_session(&mut self, session_key: &[u8]) -> Result<(), String> {
@@ -201,4 +194,39 @@ impl OpaqueService {
 
         Ok(())
     }
+
+    fn vault_request(&self, verb: &'static str, content: Option<Vec<u8>>) -> Result<Option<Vec<u8>>, String> {
+
+        let uri = format!("{}{}", &self.server_url, "/vault");
+
+        let Some(session) = self.session.as_ref() else {
+            return Err("No session after loggin.".to_string());
+        };
+
+        let headers = get_vault_request_headers(&session.session_key, &uri)
+            .map_err(|error| error.to_string())?;
+
+        let bearer_token = str::from_utf8(&session.session_token)
+            .map_err(|error| error.to_string())?;
+
+        let vault_response = self.web_client.web_server_request(
+            uri, 
+            verb, 
+            content, 
+            headers, 
+            Some(bearer_token.to_string())
+        )?;
+
+        // What happens when the body is empty todo!()
+        let vault_reponse_bytes = vault_response
+            .bytes()
+            .map_err(|error| error.to_string())?;
+
+        let body = match vault_reponse_bytes.to_vec() {
+            body if body.len() > 0 => Some(body),
+            _ => None
+        };
+
+        Ok(body)
+    } 
 }

@@ -18,7 +18,7 @@ impl WebClient {
 
     pub fn web_server_request(
         &self,
-        uri: &str,
+        uri: String,
         verb: &'static str, // Change to ENUM ? todo!()
         body: Option<Vec<u8>>,
         headers: HeaderMap,

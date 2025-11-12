@@ -18,6 +18,10 @@ impl Vault {
             decryption_key
         }
     }
+
+    pub fn get_content(self) -> Vec<u8> {
+        self.content
+    }
 }
 
 pub struct Key {
