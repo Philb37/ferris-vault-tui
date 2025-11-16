@@ -1,31 +1,27 @@
+use crate::errors::vault_error::Result;
+
 pub trait VaultManager {
-    fn create(&mut self, username: &str, password: &str) -> Result<Vault, String>;
-    fn retrieve(&mut self, username: &str, password: &str) -> Result<Vault, String>;
-    fn save(&self, vault: Vault) -> Result<(), String>;
+    fn create(&mut self, username: &str, password: &str) -> Result<Vault>;
+    fn retrieve(&mut self, username: &str, password: &str) -> Result<Vault>;
+    fn save(&self, vault: Vault) -> Result<()>;
 }
 
 pub struct Vault {
-    username: String,
-    content: Vec<u8>,
-    decryption_key: Key
+    pub content: Vec<u8>,
+    pub encryption_key: Key
 }
 
 impl Vault {
-    pub fn new(username: String, content: Vec<u8>, decryption_key: Key) -> Self {
+    pub fn new(content: Vec<u8>, encryption_key: Key) -> Self {
         Self {
-            username,
             content,
-            decryption_key
+            encryption_key
         }
-    }
-
-    pub fn get_content(self) -> Vec<u8> {
-        self.content
     }
 }
 
 pub struct Key {
-    bytes: Vec<u8>
+    pub bytes: Vec<u8>
 }
 
 impl Key {
