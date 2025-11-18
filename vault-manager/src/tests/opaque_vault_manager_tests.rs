@@ -1,10 +1,10 @@
-use core::errors::vault_error::VaultError;
-use core::ports::vault_manager::{Key, Vault, VaultManager};
+use app_core::errors::vault_error::VaultError;
+use app_core::ports::vault_manager::{Key, Vault, VaultManager};
 use std::cell::RefCell;
 use std::collections::{HashMap};
 
 use crate::opaque_api::{Api};
-use crate::opaque::{OpaqueVaultManager, StandardCipherSuite};
+use crate::opaque_vault_manager::{OpaqueVaultManager, StandardCipherSuite};
 use opaque_ke::generic_array::GenericArray;
 use opaque_ke::{ClientRegistration, ClientRegistrationFinishParameters, ServerLogin, ServerLoginParameters, ServerLoginStartResult, ServerRegistration, ServerRegistrationLen, ServerSetup};
 

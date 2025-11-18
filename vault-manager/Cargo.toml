@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-core = { path = "../core" }
+app-core = { path = "../app-core" }
 hex = "0.4.3"
 hkdf = { version = "0.12.4", features = ["std"] }
 hmac = { version = "0.12.1", features = ["std"] }

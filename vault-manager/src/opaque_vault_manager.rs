@@ -1,4 +1,4 @@
-use core::{
+use app_core::{
     errors::vault_error::*,
     ports::vault_manager::{Key, Vault, VaultManager},
 };

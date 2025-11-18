@@ -15,9 +15,9 @@ use crate::{
     constants::*,
     error_utils::{to_exchange_failed_vault_error, to_internal_vault_error},
     http_utils::{construct_body, get_default_headers, get_vault_request_headers},
-    opaque::StandardCipherSuite,
+    opaque_vault_manager::StandardCipherSuite,
 };
-use core::errors::vault_error::VaultError;
+use app_core::errors::vault_error::VaultError;
 
 const METHOD_NOT_ALLOWED: &'static str = "Method not allowed.";
 const NO_SESSION_AFTER_LOGIN: &'static str = "No session after loggin.";
@@ -104,10 +104,16 @@ impl OpaqueApi {
             client = client.bearer_auth(bearer_token);
         }
 
-        client
+        let response = client
             .headers(headers)
             .send()
-            .map_err(|error| VaultError::ExchangeFailed(error.to_string()))
+            .map_err(|error| VaultError::ExchangeFailed(error.to_string()))?;
+        
+        if let Err(error) = response.error_for_status_ref() {
+            return Err(VaultError::ExchangeFailed(error.to_string()));
+        }
+
+        Ok(response)
     }
 
     fn create_session(&mut self, session_key: &[u8]) -> Result<()> {
@@ -237,7 +243,9 @@ impl Api for OpaqueApi {
             None,
         )?;
 
-        Ok(self.create_session(&client_login_finish_result.session_key)?)
+        self.create_session(&client_login_finish_result.session_key)?;
+
+        Ok(())
     }
 
     fn get_vault(&self) -> Result<Vec<u8>> {

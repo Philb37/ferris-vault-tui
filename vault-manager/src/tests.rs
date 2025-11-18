@@ -1,4 +1,3 @@
 mod http_utils_tests;
-mod opaque_tests;
-mod vault_manager_tests;
-mod web_client_tests;
+mod opaque_api_tests;
+mod opaque_vault_manager_tests;

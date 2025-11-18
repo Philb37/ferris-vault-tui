@@ -1,4 +1,4 @@
-use core::ports::password_generator::{
+use app_core::ports::password_generator::{
     PasswordGenerator,
     PasswordRestriction
 };
