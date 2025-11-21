@@ -10,7 +10,8 @@ path = "tui/src/main.rs"
 [workspace]
 members = [
     "tui",
-    "core", 
+    "app-core", 
     "cryptography", 
-    "password-generator",
+    "password-generator", 
+    "vault-manager",
 ]

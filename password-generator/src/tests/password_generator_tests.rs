@@ -1,7 +1,7 @@
 use crate::{
     PasswordRestriction, SecurePasswordGenerator, LOWER_CASE_LETTERS, MORE_RESTRINCTIONS_THAN_LENGTH_ERROR, NO_RESTRICTION_FOUND_ERROR, NUMBERS, SPECIAL_CHARACTERS, UPPER_CASE_LETTERS, ZERO_LENGTH_ERROR
 };
-use core::ports::password_generator::PasswordGenerator;
+use app_core::ports::password_generator::PasswordGenerator;
 
 #[test]
 fn should_contain_one_of_each_restriction_and_have_18_chars() {

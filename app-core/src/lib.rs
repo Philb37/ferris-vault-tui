@@ -1,4 +1,5 @@
 pub mod ports;
+pub mod errors;
 
 pub struct UncryptedVault {
     entries: Vec<Entry>
