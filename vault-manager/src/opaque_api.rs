@@ -54,11 +54,11 @@ pub trait Api {
 
 struct Session {
     session_key: Vec<u8>,
-    session_token: Vec<u8>,
+    session_token: String,
 }
 
 impl Session {
-    pub fn new(session_key: Vec<u8>, session_token: Vec<u8>) -> Self {
+    pub fn new(session_key: Vec<u8>, session_token: String) -> Self {
         Self {
             session_key,
             session_token,
@@ -87,7 +87,7 @@ impl OpaqueApi {
         verb: &'static str, // Change to ENUM ? todo!()
         body: Option<Vec<u8>>,
         headers: HeaderMap,
-        bearer_token: Option<String>,
+        bearer_token: Option<&str>,
     ) -> Result<Response> {
         // Check if you need the mut and reassignement of client below todo!()
         let mut client = match verb {
@@ -108,7 +108,7 @@ impl OpaqueApi {
             .headers(headers)
             .send()
             .map_err(|error| VaultError::ExchangeFailed(error.to_string()))?;
-        
+
         if let Err(error) = response.error_for_status_ref() {
             return Err(VaultError::ExchangeFailed(error.to_string()));
         }
@@ -117,13 +117,15 @@ impl OpaqueApi {
     }
 
     fn create_session(&mut self, session_key: &[u8]) -> Result<()> {
-        let hkdf = Hkdf::<Sha512>::new(None, session_key);
-        let mut token = vec![0u8, 64];
+        let hkdf = Hkdf::<Sha512>::from_prk(session_key)
+            .map_err(|error| VaultError::Internal(error.to_string()))?;
+
+        let mut token = vec![0u8; 64];
 
         hkdf.expand(b"opaque-session-token", &mut token)
             .map_err(|error| VaultError::Internal(error.to_string()))?;
 
-        self.session = Some(Session::new(session_key.to_owned(), token));
+        self.session = Some(Session::new(session_key.to_owned(), hex::encode(token)));
 
         Ok(())
     }
@@ -133,7 +135,7 @@ impl OpaqueApi {
         verb: &'static str,
         content: Option<Vec<u8>>,
     ) -> Result<Option<Vec<u8>>> {
-        let uri = format!("{}{}", &self.server_url, "/vault");
+        let uri = format!("{}{}", &self.server_url, VAULT);
 
         let Some(session) = self.session.as_ref() else {
             return Err(VaultError::NotLoggedIn(NO_SESSION_AFTER_LOGIN.to_string()));
@@ -141,13 +143,9 @@ impl OpaqueApi {
 
         let headers = get_vault_request_headers(&session.session_key, &uri)?;
 
-        let bearer_token = str::from_utf8(&session.session_token)
-            .map_err(|error| VaultError::Internal(error.to_string()))?;
-
         let vault_response =
-            self.web_server_request(uri, verb, content, headers, Some(bearer_token.to_string()))?;
+            self.web_server_request(uri, verb, content, headers, Some(&session.session_token))?;
 
-        // What happens when the body is empty todo!()
         let vault_reponse_bytes = vault_response.bytes().map_err(to_internal_vault_error)?;
 
         let body = match vault_reponse_bytes.to_vec() {
@@ -166,7 +164,7 @@ impl Api for OpaqueApi {
         client_registration_start_result: &ClientRegistrationStartResult<StandardCipherSuite>,
     ) -> Result<RegistrationResponse<StandardCipherSuite>> {
         let registration_response = self.web_server_request(
-            format!("{}{}", &self.server_url, "/opaque/registration/start"),
+            format!("{}{}", &self.server_url, OPAQUE_REGISTRATION_START),
             POST,
             Some(construct_body(
                 username,
@@ -192,7 +190,7 @@ impl Api for OpaqueApi {
         client_registration_finish_result: &ClientRegistrationFinishResult<StandardCipherSuite>,
     ) -> Result<()> {
         let _ = self.web_server_request(
-            format!("{}{}", &self.server_url, "/opaque/registration/finish"),
+            format!("{}{}", &self.server_url, OPAQUE_REGISTRATION_FINISH),
             POST,
             Some(construct_body(
                 username,
@@ -211,7 +209,7 @@ impl Api for OpaqueApi {
         client_login_start_result: &ClientLoginStartResult<StandardCipherSuite>,
     ) -> Result<CredentialResponse<StandardCipherSuite>> {
         let login_response = self.web_server_request(
-            format!("{}{}", &self.server_url, "/opaque/login/start"),
+            format!("{}{}", &self.server_url, OPAQUE_LOGIN_START),
             POST,
             Some(construct_body(
                 username,
@@ -233,7 +231,7 @@ impl Api for OpaqueApi {
         client_login_finish_result: &ClientLoginFinishResult<StandardCipherSuite>,
     ) -> Result<()> {
         let _ = self.web_server_request(
-            format!("{}{}", &self.server_url, "/opaque/login/finish"),
+            format!("{}{}", &self.server_url, OPAQUE_LOGIN_FINISH),
             POST,
             Some(construct_body(
                 username,
