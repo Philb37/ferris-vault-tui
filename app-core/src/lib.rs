@@ -1,44 +1,23 @@
+// Re-export for other crates
+pub use generic_array;
+
+use crate::vault::uncrypted_vault::{Entry, UncryptedVault};
+
 pub mod ports;
 pub mod errors;
-
-pub struct UncryptedVault {
-    entries: Vec<Entry>
-}
-
-impl UncryptedVault {
-    fn add_entry(&mut self, entry: Entry) {
-        self.entries.push(entry);
-    }
-
-    fn update_entry(&mut self, entry: Entry) {
-        self.entries.pop_if(|e| e.id == entry.id);
-        self.add_entry(entry);
-    }
-}
-
-pub struct Entry {
-    id: String,
-    title: String,
-    username: String,
-    password: String
-}
-
-impl Entry {
-    fn save_password(&mut self, password: &str) {
-        self.password = password.to_string();
-    }
-}
+pub mod vault;
+pub mod cryptography;
 
 pub enum Commands {
 
 }
 
 pub fn create_account(username: &str, password: &str) -> UncryptedVault {
-    UncryptedVault { entries: vec![] }
+    UncryptedVault::new(vec![])
 }
 
 pub fn logging_in(username: &str, password: &str) -> UncryptedVault {
-    UncryptedVault { entries: vec![] }
+    UncryptedVault::new(vec![])
 }
 
 pub fn add_entry(entry: Entry, uncrypted_vault: &mut UncryptedVault) {
