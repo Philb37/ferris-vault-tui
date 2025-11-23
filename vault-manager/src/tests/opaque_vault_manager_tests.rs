@@ -1,5 +1,7 @@
+use app_core::cryptography::key::Key;
 use app_core::errors::vault_error::VaultError;
-use app_core::ports::vault_manager::{Key, Vault, VaultManager};
+use app_core::ports::vault_manager::{VaultManager};
+use app_core::vault::crypted_vault::CryptedVault;
 use std::cell::RefCell;
 use std::collections::{HashMap};
 
@@ -26,7 +28,7 @@ fn should_create_vault() {
     // A-ssert
 
     assert_eq!(vault.content, vec![42]);
-    assert!(!vault.encryption_key.bytes.is_empty())
+    assert!(vault.encryption_key.as_bytes().len() != 0);
 }
 
 #[test]
@@ -88,7 +90,7 @@ fn should_retrieve_vault() {
     // A-ssert
 
     assert_eq!(vault.content, vec![42]);
-    assert!(!vault.encryption_key.bytes.is_empty());
+    assert!(vault.encryption_key.as_bytes().len() != 0);
 }
 
 #[test]
@@ -97,11 +99,11 @@ fn should_save_vault() {
     // A-rrange
 
     let opaque_vault_manager = create_opaque_vault_manager(MockOpaqueClient::new(true));
-    let vault = Vault::new(vec![], Key::new(vec![]));
+    let vault = CryptedVault::new(vec![], Key::new(GenericArray::clone_from_slice(&vec![42; 64])));
 
     // A-ct
 
-    let result = opaque_vault_manager.save(vault);
+    let result = opaque_vault_manager.save(&vault);
 
     // A-ssert
     assert!(result.is_ok());
@@ -113,11 +115,11 @@ fn should_not_save_vault_if_not_logged_in() {
     // A-rrange
 
     let opaque_vault_manager = create_opaque_vault_manager(MockOpaqueClient::new(false));
-    let vault = Vault::new(vec![], Key::new(vec![]));
+    let vault = CryptedVault::new(vec![], Key::new(GenericArray::clone_from_slice(&[42; 64])));
 
     // A-ct
 
-    let result = opaque_vault_manager.save(vault);
+    let result = opaque_vault_manager.save(&vault);
 
     // A-ssert
     

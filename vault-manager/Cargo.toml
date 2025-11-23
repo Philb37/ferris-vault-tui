@@ -5,12 +5,14 @@ edition = "2024"
 
 [dependencies]
 app-core = { path = "../app-core" }
+crypto-common = "0.1.7"
 hex = "0.4.3"
 hkdf = { version = "0.12.4", features = ["std"] }
 hmac = { version = "0.12.1", features = ["std"] }
-opaque-ke = { version = "4.1.0-pre.0", features = ["argon2", "std"] }
+opaque-ke = { version = "4.1.0-pre.1", features = ["argon2", "std"] }
 reqwest = { version = "0.12.24", features = ["blocking", "rustls-tls-webpki-roots"] }
 sha2 = "0.10.9"
+voprf = "0.5.0"
 
 [dev-dependencies]
 mock_instant = "0.6.0"

@@ -1,9 +1,8 @@
-pub trait Cryptography {
-    fn encrypt(data: &[u8], key: Key) -> Vec<u8>; // TODO : Fix
-    fn decrypt(data: &[u8], key: Key) -> Vec<u8>; // TODO : Fix
-}
+use generic_array::ArrayLength;
 
-pub struct Key {
-    content: Vec<u8>,
-    algorithm: String
+use crate::vault::{crypted_vault::CryptedVault, uncrypted_vault::UncryptedVault};
+
+pub trait Cryptography<N: ArrayLength<u8>> {
+    fn encrypt(&self, clear_vault: &UncryptedVault) -> CryptedVault<N>;
+    fn decrypt(&self, vault: CryptedVault<N>) -> UncryptedVault;
 }
