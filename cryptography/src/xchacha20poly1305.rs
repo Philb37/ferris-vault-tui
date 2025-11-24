@@ -23,7 +23,7 @@ impl NoKeyCipher for NoKeyXChaCha20Poly1305 {
     type Crypto = XChaCha20Poly1305;
 
     /// Used in order to convert the key from 64 to 32 bytes
-    fn derive_key(key: &[u8]) -> Result<Self::Crypto> {
+    fn create_cipher_from_key(key: &[u8]) -> Result<Self::Crypto> {
         if key.len() == 32 {
             return Ok(XChaCha20Poly1305 {
                 key: GenericArray::<u8, U32>::clone_from_slice(key),
