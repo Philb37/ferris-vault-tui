@@ -6,5 +6,8 @@ pub trait Cryptography {
 }
 
 pub trait NoKeyCipher {
-    fn derive_key(key: &[u8]) -> Result<Box<dyn Cryptography>>;
+
+    type Crypto: Cryptography;
+
+    fn derive_key(key: &[u8]) -> Result<Self::Crypto>;
 }

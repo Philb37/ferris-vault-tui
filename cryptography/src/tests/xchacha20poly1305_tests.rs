@@ -1,6 +1,6 @@
 use app_core::{
     cryptography::uncrypted_vault::UncryptedVault, generic_array::GenericArray,
-    ports::cryptography::{NoKeyCipher},
+    ports::cryptography::{Cryptography, NoKeyCipher},
 };
 use chacha20poly1305::{
     AeadCore, KeyInit,
@@ -23,7 +23,7 @@ fn should_encrypt_vault() {
 
     let key = &[42; 32];
 
-    let xchacha = NoKeyXChaCha20Poly1305::derive_key(key).unwrap();
+    let xchacha = NoKeyXChaCha20Poly1305::create_cipher_from_key(key).unwrap();
 
     let key = GenericArray::<u8, U32>::clone_from_slice(key);
 
@@ -59,7 +59,7 @@ fn should_decrypt_vault() {
 
     let key = &[42; 32];
 
-    let xchacha = NoKeyXChaCha20Poly1305::derive_key(key).unwrap();
+    let xchacha = NoKeyXChaCha20Poly1305::create_cipher_from_key(key).unwrap();
 
     let key = GenericArray::<u8, U32>::clone_from_slice(key);
     let cipher = chacha20poly1305::XChaCha20Poly1305::new(&key);
@@ -93,7 +93,7 @@ fn should_derive_key_from_64_bytes() {
 
     // A-ct
 
-    let result = NoKeyXChaCha20Poly1305::derive_key(key);
+    let result = NoKeyXChaCha20Poly1305::create_cipher_from_key(key);
 
     // A-ssert
     assert!(result.is_ok());
@@ -107,7 +107,7 @@ fn should_derive_key_from_16_bytes() {
 
     // A-ct
 
-    let result = NoKeyXChaCha20Poly1305::derive_key(key);
+    let result = NoKeyXChaCha20Poly1305::create_cipher_from_key(key);
 
     // A-ssert
     assert!(result.is_ok());
@@ -121,7 +121,7 @@ fn should_not_derive_key_from_32_bytes() {
 
     // A-ct
 
-    let result = NoKeyXChaCha20Poly1305::derive_key(key);
+    let result = NoKeyXChaCha20Poly1305::create_cipher_from_key(key);
 
     // A-ssert
     assert!(result.is_ok());
