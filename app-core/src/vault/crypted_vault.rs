@@ -1,6 +1,6 @@
 use generic_array::ArrayLength;
 
-use crate::cryptography::key::Key;
+use crate::vault::key::Key;
 
 pub struct CryptedVault<N: ArrayLength<u8>> {
     pub content: Vec<u8>,

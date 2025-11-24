@@ -1,6 +1,6 @@
 use generic_array::ArrayLength;
 
-use crate::{errors::vault_error::Result, vault::crypted_vault::CryptedVault};
+use crate::{vault::crypted_vault::CryptedVault, vault::vault_error::Result};
 
 pub trait VaultManager {
     type KeySize: ArrayLength<u8>;

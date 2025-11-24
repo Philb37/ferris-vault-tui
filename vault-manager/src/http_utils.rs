@@ -7,7 +7,7 @@ use crate::{
     constants::GET,
     Result
 };
-use app_core::errors::vault_error::VaultError;
+use app_core::vault::vault_error::VaultError;
 
 #[cfg(test)]
 use mock_instant::global::{SystemTime, UNIX_EPOCH};

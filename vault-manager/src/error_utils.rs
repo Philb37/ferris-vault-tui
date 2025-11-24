@@ -1,4 +1,4 @@
-use app_core::errors::vault_error::VaultError;
+use app_core::vault::vault_error::VaultError;
 
 use opaque_ke::errors::ProtocolError;
 
