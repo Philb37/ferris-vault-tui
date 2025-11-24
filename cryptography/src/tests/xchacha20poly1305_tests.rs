@@ -1,6 +1,6 @@
 use app_core::{
     cryptography::uncrypted_vault::UncryptedVault, generic_array::GenericArray,
-    ports::cryptography::{NoKeyCipher},
+    ports::cryptography::{Cryptography, NoKeyCipher},
 };
 use chacha20poly1305::{
     AeadCore, KeyInit,
