@@ -17,7 +17,7 @@ use crate::{
     http_utils::{construct_body, get_default_headers, get_vault_request_headers},
     opaque_vault_manager::StandardCipherSuite,
 };
-use app_core::errors::vault_error::VaultError;
+use app_core::vault::vault_error::VaultError;
 
 const METHOD_NOT_ALLOWED: &'static str = "Method not allowed.";
 const NO_SESSION_AFTER_LOGIN: &'static str = "No session after loggin.";

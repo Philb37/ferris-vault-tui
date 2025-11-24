@@ -1,10 +1,10 @@
 // Re-export for other crates
 pub use generic_array;
+pub use bincode;
 
-use crate::vault::uncrypted_vault::{Entry, UncryptedVault};
+use crate::cryptography::uncrypted_vault::{Entry, UncryptedVault};
 
 pub mod ports;
-pub mod errors;
 pub mod vault;
 pub mod cryptography;
 
@@ -13,15 +13,18 @@ pub enum Commands {
 }
 
 pub fn create_account(username: &str, password: &str) -> UncryptedVault {
-    UncryptedVault::new(vec![])
+    todo!()
+    // UncryptedVault::new(vec![])
 }
 
 pub fn logging_in(username: &str, password: &str) -> UncryptedVault {
-    UncryptedVault::new(vec![])
+    todo!()
+    // UncryptedVault::new(vec![])
 }
 
 pub fn add_entry(entry: Entry, uncrypted_vault: &mut UncryptedVault) {
-    uncrypted_vault.add_entry(entry);
+    todo!()
+    // uncrypted_vault.add_entry(entry);
 }
 
 pub fn update_entry(entry: Entry, uncrypted_vault: &mut UncryptedVault) {

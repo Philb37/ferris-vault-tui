@@ -1,2 +1,3 @@
 pub mod crypted_vault;
-pub mod uncrypted_vault;
+pub mod vault_error;
+pub mod key;

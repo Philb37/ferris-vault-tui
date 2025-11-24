@@ -1,7 +1,6 @@
 use app_core::{
-    cryptography::key::Key,
-    errors::vault_error::*,
-    ports::vault_manager::VaultManager, vault::crypted_vault::CryptedVault,
+    ports::vault_manager::VaultManager,
+    vault::{crypted_vault::CryptedVault, key::Key, vault_error::*},
 };
 use crypto_common::OutputSizeUser;
 

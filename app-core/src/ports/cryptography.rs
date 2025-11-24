@@ -1,8 +1,10 @@
-use generic_array::ArrayLength;
+use crate::cryptography::{cryptography_error::Result, uncrypted_vault::UncryptedVault};
 
-use crate::vault::{crypted_vault::CryptedVault, uncrypted_vault::UncryptedVault};
+pub trait Cryptography {
+    fn encrypt(&self, uncrypted_vault: &UncryptedVault) -> Result<Vec<u8>>;
+    fn decrypt(&self, vault: &[u8]) -> Result<UncryptedVault>;   
+}
 
-pub trait Cryptography<N: ArrayLength<u8>> {
-    fn encrypt(&self, clear_vault: &UncryptedVault) -> CryptedVault<N>;
-    fn decrypt(&self, vault: CryptedVault<N>) -> UncryptedVault;
+pub trait NoKeyCipher {
+    fn derive_key(key: &[u8]) -> Result<Box<dyn Cryptography>>;
 }
