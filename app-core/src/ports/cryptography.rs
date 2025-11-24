@@ -9,5 +9,5 @@ pub trait NoKeyCipher {
 
     type Crypto: Cryptography;
 
-    fn derive_key(key: &[u8]) -> Result<Self::Crypto>;
+    fn create_cipher_from_key(key: &[u8]) -> Result<Self::Crypto>;
 }
