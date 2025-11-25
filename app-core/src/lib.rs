@@ -9,3 +9,6 @@ pub mod cryptography;
 pub mod password;
 pub mod ports;
 pub mod vault;
+
+#[cfg(test)]
+mod tests;
