@@ -7,5 +7,5 @@ pub trait VaultManager {
 
     fn create(&mut self, username: &str, password: &str) -> Result<CryptedVault<Self::KeySize>>;
     fn retrieve(&mut self, username: &str, password: &str) -> Result<CryptedVault<Self::KeySize>>;
-    fn save(&self, vault: &CryptedVault<Self::KeySize>) -> Result<()>;
+    fn save(&self, vault: Vec<u8>) -> Result<()>;
 }
