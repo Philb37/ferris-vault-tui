@@ -8,8 +8,10 @@ fn should_contain_one_of_each_restriction_and_have_18_chars() {
 
     // A-ssuming
 
+    let length = 18;
+
     let restriction = PasswordRestriction {
-        length: 18,
+        length,
         lower_case: true,
         upper_case: true,
         numbers: true,
@@ -18,14 +20,14 @@ fn should_contain_one_of_each_restriction_and_have_18_chars() {
 
     // A-ction
 
-    let result = match SecurePasswordGenerator::generate_password(&restriction) {
+    let result = match SecurePasswordGenerator::generate_password(restriction) {
         Ok(result) => result,
         Err(error) => panic!("{error}")
     };
 
     // A-ssert
 
-    assert_eq!(restriction.length, result.len());
+    assert_eq!(length, result.len());
     assert!(
         result
         .iter()
@@ -56,8 +58,10 @@ fn should_contain_only_lower_case_and_have_18_chars() {
 
     // A-ssuming
 
+    let length = 18;
+
     let restriction = PasswordRestriction {
-        length: 18,
+        length,
         lower_case: true,
         upper_case: false,
         numbers: false,
@@ -66,14 +70,14 @@ fn should_contain_only_lower_case_and_have_18_chars() {
 
     // A-ction
 
-    let result = match SecurePasswordGenerator::generate_password(&restriction) {
+    let result = match SecurePasswordGenerator::generate_password(restriction) {
         Ok(result) => result,
         Err(error) => panic!("{error}")
     };
 
     // A-ssert
 
-    assert_eq!(restriction.length, result.len());
+    assert_eq!(length, result.len());
     assert!(
         result
         .iter()
@@ -104,8 +108,10 @@ fn should_contain_only_upper_case_and_have_18_chars() {
 
     // A-ssuming
 
+    let length = 18;
+
     let restriction = PasswordRestriction {
-        length: 18,
+        length,
         lower_case: false,
         upper_case: true,
         numbers: false,
@@ -114,14 +120,14 @@ fn should_contain_only_upper_case_and_have_18_chars() {
 
     // A-ction
 
-    let result = match SecurePasswordGenerator::generate_password(&restriction) {
+    let result = match SecurePasswordGenerator::generate_password(restriction) {
         Ok(result) => result,
         Err(error) => panic!("{error}")
     };
 
     // A-ssert
 
-    assert_eq!(restriction.length, result.len());
+    assert_eq!(length, result.len());
     assert!(
         !result
         .iter()
@@ -152,8 +158,10 @@ fn should_contain_numbers_case_and_have_18_chars() {
 
     // A-ssuming
 
+    let length = 18;
+
     let restriction = PasswordRestriction {
-        length: 18,
+        length,
         lower_case: false,
         upper_case: false,
         numbers: true,
@@ -162,14 +170,14 @@ fn should_contain_numbers_case_and_have_18_chars() {
 
     // A-ction
 
-    let result = match SecurePasswordGenerator::generate_password(&restriction) {
+    let result = match SecurePasswordGenerator::generate_password(restriction) {
         Ok(result) => result,
         Err(error) => panic!("{error}")
     };
 
     // A-ssert
 
-    assert_eq!(restriction.length, result.len());
+    assert_eq!(length, result.len());
     assert!(
         !result
         .iter()
@@ -200,8 +208,10 @@ fn should_contain_only_special_characters_and_have_18_chars() {
 
     // A-ssuming
 
+    let length = 18;
+
     let restriction = PasswordRestriction {
-        length: 18,
+        length,
         lower_case: false,
         upper_case: false,
         numbers: false,
@@ -210,14 +220,14 @@ fn should_contain_only_special_characters_and_have_18_chars() {
 
     // A-ction
 
-    let result = match SecurePasswordGenerator::generate_password(&restriction) {
+    let result = match SecurePasswordGenerator::generate_password(restriction) {
         Ok(result) => result,
         Err(error) => panic!("{error}")
     };
 
     // A-ssert
 
-    assert_eq!(restriction.length, result.len());
+    assert_eq!(length, result.len());
     assert!(
         !result
         .iter()
@@ -248,8 +258,10 @@ fn should_be_error_no_restriction() {
 
     // A-ssuming
 
+    let length = 18;
+
     let restriction = PasswordRestriction {
-        length: 18,
+        length,
         lower_case: false,
         upper_case: false,
         numbers: false,
@@ -258,7 +270,7 @@ fn should_be_error_no_restriction() {
 
     // A-ction and A-ssert
 
-    match SecurePasswordGenerator::generate_password(&restriction) {
+    match SecurePasswordGenerator::generate_password(restriction) {
         Ok(_) => panic!("Should have been an Err, got an Ok. A password shouldn't be generated if there is no restrictions."),
         Err(error) => assert_eq!(error, NO_RESTRICTION_FOUND_ERROR)
     };
@@ -269,8 +281,10 @@ fn should_be_error_zero_length() {
 
     // A-ssuming
 
+    let length = 0;
+
     let restriction = PasswordRestriction {
-        length: 0,
+        length,
         lower_case: true,
         upper_case: false,
         numbers: false,
@@ -279,7 +293,7 @@ fn should_be_error_zero_length() {
 
     // A-ction and A-ssert
 
-    match SecurePasswordGenerator::generate_password(&restriction) {
+    match SecurePasswordGenerator::generate_password(restriction) {
         Ok(_) => panic!("Should have been an Err, got an Ok. A password shouldn't be generated if there is a 0 length."),
         Err(error) => assert_eq!(error, ZERO_LENGTH_ERROR)
     };
@@ -290,8 +304,10 @@ fn should_be_error_more_restriction_than_length() {
 
     // A-ssuming
 
+    let length = 3;
+
     let restriction = PasswordRestriction {
-        length: 3,
+        length,
         lower_case: true,
         upper_case: true,
         numbers: true,
@@ -300,7 +316,7 @@ fn should_be_error_more_restriction_than_length() {
 
     // A-ction and A-ssert
 
-    match SecurePasswordGenerator::generate_password(&restriction) {
+    match SecurePasswordGenerator::generate_password(restriction) {
         Ok(_) => panic!("Should have been an Err, got an Ok. A password shouldn't be generated if there is more restriction than the desired length."),
         Err(error) => assert_eq!(error, MORE_RESTRINCTIONS_THAN_LENGTH_ERROR)
     };

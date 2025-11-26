@@ -1,6 +1,4 @@
 use app_core::ports::vault_manager::VaultManager;
-use app_core::vault::crypted_vault::CryptedVault;
-use app_core::vault::key::Key;
 use app_core::vault::vault_error::VaultError;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -105,14 +103,12 @@ fn should_save_vault() {
     // A-rrange
 
     let opaque_vault_manager = create_opaque_vault_manager(MockOpaqueClient::new(true));
-    let vault = CryptedVault::new(
-        vec![],
-        Key::new(GenericArray::clone_from_slice(&vec![42; 64])),
-    );
+
+    let vault_bytes = vec![];
 
     // A-ct
 
-    let result = opaque_vault_manager.save(&vault);
+    let result = opaque_vault_manager.save(vault_bytes);
 
     // A-ssert
     assert!(result.is_ok());
@@ -123,11 +119,12 @@ fn should_not_save_vault_if_not_logged_in() {
     // A-rrange
 
     let opaque_vault_manager = create_opaque_vault_manager(MockOpaqueClient::new(false));
-    let vault = CryptedVault::new(vec![], Key::new(GenericArray::clone_from_slice(&[42; 64])));
+
+    let vault_bytes = vec![];
 
     // A-ct
 
-    let result = opaque_vault_manager.save(&vault);
+    let result = opaque_vault_manager.save(vault_bytes);
 
     // A-ssert
 

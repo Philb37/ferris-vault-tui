@@ -1,7 +1,4 @@
-use app_core::ports::password_generator::{
-    PasswordGenerator,
-    PasswordRestriction
-};
+use app_core::{password::password_restriction::PasswordRestriction, ports::password_generator::PasswordGenerator};
 use rand::seq::{IndexedRandom, SliceRandom};
 
 const MORE_RESTRINCTIONS_THAN_LENGTH_ERROR: &'static str = "There cannot be more restrictions than the desired length.";
@@ -17,7 +14,7 @@ pub struct SecurePasswordGenerator { }
 
 impl PasswordGenerator for SecurePasswordGenerator {
 
-    fn generate_password(restrictions: &PasswordRestriction) -> Result<Vec<u8>, String> {
+    fn generate_password(restrictions: PasswordRestriction) -> Result<Vec<u8>, String> {
 
         if restrictions.length == 0 {
             return Err(ZERO_LENGTH_ERROR.to_string());

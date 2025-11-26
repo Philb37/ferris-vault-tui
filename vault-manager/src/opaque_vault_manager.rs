@@ -143,14 +143,14 @@ impl<T: Api> VaultManager for OpaqueVaultManager<T> {
         Ok(CryptedVault::new(vault_content, export_key))
     }
 
-    fn save(&self, vault: &CryptedVault<Self::KeySize>) -> Result<()> {
+    fn save(&self, vault: Vec<u8>) -> Result<()> {
         if !self.api.is_logged_in() {
             return Err(VaultError::NotLoggedIn(
                 CANNOT_SAVE_VAULT_IF_NOT_LOGGED_IN.to_string(),
             ));
         }
 
-        self.save_vault(vault.content.clone())?;
+        self.save_vault(vault)?;
 
         Ok(())
     }
