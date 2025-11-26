@@ -59,9 +59,9 @@ impl UncryptedVault {
 #[derive(Encode, Decode, PartialEq, Debug)]
 pub struct Entry {
     id: usize,
-    title: String,
-    username: String,
-    password: String,
+    pub title: String,
+    pub username: String,
+    pub password: String,
 }
 
 impl Entry {
