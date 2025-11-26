@@ -20,6 +20,7 @@
 ### App Core
 
 - [ ] Unit test : Test for errors
+- [ ] Maybe rename to core-domain ?
 
 ### Global
 
