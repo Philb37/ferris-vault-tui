@@ -16,6 +16,7 @@ use sha2::Sha256;
 
 pub(crate) const NONCE_LENGTH: usize = 24;
 
+#[derive(Debug, Default)]
 pub struct NoKeyXChaCha20Poly1305;
 
 impl NoKeyCipher for NoKeyXChaCha20Poly1305 {
@@ -40,6 +41,7 @@ impl NoKeyCipher for NoKeyXChaCha20Poly1305 {
     }
 }
 
+#[derive(Debug, Default)]
 pub struct XChaCha20Poly1305 {
     key: Key,
 }

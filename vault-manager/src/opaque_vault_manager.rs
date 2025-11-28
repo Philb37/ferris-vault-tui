@@ -24,6 +24,7 @@ pub type ExportKeySize<CS> =
 /// Standard Cipher Suite for the vault-manager
 /// Using Ristretto255 as an Oprf and. Triple Diffie Hellman for key exchange algorithm and sha512 for hashing
 /// And Argon2 (default parameters, argon2id) as a key derivation
+#[derive(Debug, Default)]
 pub struct StandardCipherSuite;
 
 impl CipherSuite for StandardCipherSuite {
@@ -32,6 +33,7 @@ impl CipherSuite for StandardCipherSuite {
     type Ksf = Argon2<'static>;
 }
 
+#[derive(Debug, Default)]
 pub struct OpaqueVaultManager<T: Api> {
     api: T,
 }

@@ -1,13 +1,5 @@
-[package]
-name = "ferris-vault-tui"
-version = "0.1.0"
-edition = "2024"
-
-[[bin]]
-name = "tui"
-path = "tui/src/main.rs"
-
 [workspace]
+resolver = "3"
 members = [
     "tui",
     "app-core", 

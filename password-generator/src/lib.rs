@@ -10,11 +10,12 @@ const UPPER_CASE_LETTERS: &'static [u8; 26] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const NUMBERS:            &'static [u8; 10] = b"0123456789";
 const SPECIAL_CHARACTERS: &'static [u8; 32] = b"!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
 
-pub struct SecurePasswordGenerator { }
+#[derive(Debug, Default)]
+pub struct SecurePasswordGenerator;
 
 impl PasswordGenerator for SecurePasswordGenerator {
 
-    fn generate_password(restrictions: PasswordRestriction) -> Result<Vec<u8>, String> {
+    fn generate_password(restrictions: &PasswordRestriction) -> Result<Vec<u8>, String> {
 
         if restrictions.length == 0 {
             return Err(ZERO_LENGTH_ERROR.to_string());

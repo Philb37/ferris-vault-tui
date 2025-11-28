@@ -2,6 +2,10 @@
 
 Ferry-Vault-TUI is a TUI password manager written in rust.
 
+### Important
+
+The state of the TUI is catastrophic. No correct error handling, weird state handling, could be refactored. The goal was to have a first version working.
+
 ## User features
 
 - Creating a new account

@@ -2,7 +2,7 @@ use bincode::{Decode, Encode, config};
 
 use crate::cryptography::cryptography_error::{CryptographyError, Result};
 
-#[derive(Encode, Decode, PartialEq, Debug)]
+#[derive(Encode, Decode, PartialEq, Debug, Default)]
 pub struct UncryptedVault {
     entries: Vec<Entry>,
 }
@@ -56,7 +56,7 @@ impl UncryptedVault {
     }
 }
 
-#[derive(Encode, Decode, PartialEq, Debug)]
+#[derive(Encode, Decode, PartialEq, Debug, Default, Clone)]
 pub struct Entry {
     id: usize,
     pub title: String,

@@ -4,4 +4,13 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+color-eyre = "0.6.5"
+crossterm = "0.29.0"
+ratatui = "0.29.0"
 app-core = { path = "../app-core" }
+vault-manager = { path = "../vault-manager" }
+password-generator = { path = "../password-generator" }
+cryptography = { path = "../cryptography" }
+tui-textarea = "0.7.0"
+serde = "1.0.228"
+config = "0.15.19"
