@@ -3,6 +3,7 @@ pub use bincode;
 pub use generic_array;
 
 pub use cryptography::uncrypted_vault;
+pub use cli_clipboard;
 
 pub mod core;
 pub mod cryptography;

@@ -52,6 +52,7 @@ pub trait Api {
     fn is_logged_in(&self) -> bool;
 }
 
+#[derive(Debug, Default)]
 struct Session {
     session_key: Vec<u8>,
     session_token: String,
@@ -66,6 +67,7 @@ impl Session {
     }
 }
 
+#[derive(Debug, Default)]
 pub struct OpaqueApi {
     client: Client,
     server_url: String,

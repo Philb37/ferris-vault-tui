@@ -109,7 +109,7 @@ fn should_generate_password() {
 
     // A-ct
 
-    let result = logged_core_service.generate_password(restrictions);
+    let result = logged_core_service.generate_password(&restrictions);
 
     // A-ssert
     assert!(result.is_ok());
@@ -254,7 +254,7 @@ impl NoKeyCipher for MockNoKeyCipher {
 struct MockPasswordGenerator;
 
 impl PasswordGenerator for MockPasswordGenerator {
-    fn generate_password(_: PasswordRestriction) -> Result<Vec<u8>, String> {
+    fn generate_password(_: &PasswordRestriction) -> Result<Vec<u8>, String> {
         Ok(vec![42])
     }
 }

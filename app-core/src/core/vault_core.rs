@@ -24,11 +24,12 @@ pub trait LoggedCore<VM: VaultManager, PG: PasswordGenerator, C: Cryptography> {
     fn get_entries(&self) -> &[Entry];
     fn add_entry(&mut self, title: String, username: String, password: String);
     fn update_entry(&mut self, entry: Entry);
-    fn generate_password(&self, restrictions: PasswordRestriction) -> Result<Vec<u8>>;
+    fn generate_password(&self, restrictions: &PasswordRestriction) -> Result<Vec<u8>>;
     fn save_vault(&self) -> Result<()>;
     fn copy_to_clipboard(&self, content: String) -> Result<()>;
 }
 
+#[derive(Debug, Default)]
 pub struct CoreService<VM: VaultManager, PG: PasswordGenerator, NKC: NoKeyCipher> {
     vault_manager: VM,
     _phantom_pg: PhantomData<PG>,
@@ -93,6 +94,7 @@ impl<VM: VaultManager, PG: PasswordGenerator, NKC: NoKeyCipher> Core<VM, PG, NKC
     }
 }
 
+#[derive(Debug, Default)]
 pub struct LoggedCoreService<VM: VaultManager, PG: PasswordGenerator, C: Cryptography> {
     vault_manager: VM,
     _phantom: std::marker::PhantomData<PG>,
@@ -115,7 +117,7 @@ impl<VM: VaultManager, PG: PasswordGenerator, C: Cryptography> LoggedCore<VM, PG
         self.vault.update_entry(entry);
     }
 
-    fn generate_password(&self, restrictions: PasswordRestriction) -> Result<Vec<u8>> {
+    fn generate_password(&self, restrictions: &PasswordRestriction) -> Result<Vec<u8>> {
         PG::generate_password(restrictions)
             .map_err(|error| CoreError::PasswordGeneratorError(error.to_string()))
     }
