@@ -1,0 +1,37 @@
+name: Rust CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install cargo-audit, tarpaulin, chef
+      run: cargo install cargo-audit cargo-tarpaulin cargo-chef
+
+    - name: Security check
+      run: cargo audit
+
+    # - name: Dependency policy check
+    #   run: cargo deny check
+
+    - name: Test coverage
+      run: cargo tarpaulin
+    
+    - name: Build with chef
+      run: |
+        cargo chef prepare --recipe-path recipe.json
+        cargo chef cook --recipe-path recipe.json
+        cargo build --release --verbose
+    
