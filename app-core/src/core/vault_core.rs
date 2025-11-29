@@ -60,15 +60,11 @@ impl<VM: VaultManager, PG: PasswordGenerator, NKC: NoKeyCipher> Core<VM, PG, NKC
         let cryptography = NKC::create_cipher_from_key(crypted_vault.encryption_key.as_bytes())
             .map_err(|error| CoreError::CryptographyError(error.to_string()))?;
 
-        let uncrypted_vault = cryptography
-            .decrypt(&crypted_vault.content)
-            .map_err(|error| CoreError::CryptographyError(error.to_string()))?;
-
         Ok(LoggedCoreService {
             vault_manager: self.vault_manager,
             _phantom: std::marker::PhantomData,
             cryptography,
-            vault: uncrypted_vault,
+            vault: UncryptedVault::new(),
         })
     }
 
