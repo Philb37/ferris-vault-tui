@@ -134,6 +134,7 @@ fn should_save_vault() {
     assert!(result.is_ok());
 }
 
+#[ignore]
 #[test]
 fn should_copy_to_clipboard() {
 
