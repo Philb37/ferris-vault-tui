@@ -1,8 +1,8 @@
 # Description
 
-Ferry-Vault-TUI is a TUI password manager written in rust.
+Ferris-Vault-TUI is a TUI password manager written in rust, it works alongside the [server](https://github.com/Philb37/ferris-vault-server).
 
-### Important
+## Important
 
 The state of the TUI is catastrophic. No correct error handling, weird state handling, could be refactored. The goal was to have a first version working.
 
@@ -16,6 +16,14 @@ It seems clipboard copy doesn't work on linux, failed in CI.
 - Creating new entries or managing existing ones in the vault
 - Inputing manually a new password in an entry, or generating automatically a new one based on requirements like special character, spaces, numbers, alphabetical, etc...
 - Seeing a list of command that can be executed on an entry, like ctrl+v to copy/paste automatically, on the TUI
+
+# Lauching the app
+
+You need to pass as an argument the path to the config file.
+
+`tui.exe my_path/config.yaml`
+
+You can follow the [config](/config.yaml) example to create your config.
 
 # Project Architecture
 
