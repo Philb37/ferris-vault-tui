@@ -1,6 +1,7 @@
 use crate::http_utils::*;
 use hmac::Mac;
 use mock_instant::global::{UNIX_EPOCH, MockClock, SystemTime};
+use reqwest::header::HOST;
 use std::time::Duration;
 
 const CONTENT_TYPE: &'static str = "Content-Type";
@@ -33,7 +34,10 @@ fn vault_headers_should_contain_timestamp_signature_as_sensitive() {
     let content_type_value = "application/octet-stream";
     let session_key = "session_key".as_bytes();
     let verb = "GET";
-    let uri = "uri";
+    let server_url = "http://localhost";
+    let path = "/test";
+
+    let uri = format!("{}{}", server_url, path);
 
     let duration = Duration::from_millis(1763127134822);
     MockClock::set_system_time(duration);
@@ -51,12 +55,15 @@ fn vault_headers_should_contain_timestamp_signature_as_sensitive() {
 
     // A-ct
 
-    let headers = get_vault_request_headers(session_key, verb, uri).unwrap();
+    let headers = get_vault_request_headers(session_key, verb, server_url, path).unwrap();
 
     // A-ssert
 
     assert!(headers.contains_key(CONTENT_TYPE));
     assert_eq!(headers.get(CONTENT_TYPE).unwrap(), content_type_value);
+
+    assert!(headers.contains_key(HOST));
+    assert_eq!(headers.get(HOST).unwrap(), server_url);
 
     assert!(headers.contains_key(X_SIGNATURE));
     assert_eq!(headers.get(X_SIGNATURE).unwrap(), &signature);
@@ -66,7 +73,7 @@ fn vault_headers_should_contain_timestamp_signature_as_sensitive() {
     assert_eq!(headers.get(X_TIMESTAMP).unwrap(), &timestamp);
     assert!(headers.get(X_TIMESTAMP).unwrap().is_sensitive());
 
-    assert_eq!(headers.len(), 3);
+    assert_eq!(headers.len(), 4);
 }
 
 #[test]

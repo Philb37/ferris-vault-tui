@@ -143,7 +143,7 @@ impl OpaqueApi {
             return Err(VaultError::NotLoggedIn(NO_SESSION_AFTER_LOGIN.to_string()));
         };
 
-        let headers = get_vault_request_headers(&session.session_key, verb, &uri)?;
+        let headers = get_vault_request_headers(&session.session_key, verb, &self.server_url, VAULT)?;
 
         let vault_response =
             self.web_server_request(uri, verb, content, headers, Some(&session.session_token))?;

@@ -13,6 +13,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 const APPLICATION_OCTET_STREAM: &'static str = "application/octet-stream";
 const CONTENT_TYPE: &'static str = "Content-Type";
 const X_TIMESTAMP: &'static str = "X-Timestamp";
+const HOST: &'static str = "Host";
 const X_SIGNATURE: &'static str = "X-Signature";
 const SEPARATOR: &'static str = ";";
 
@@ -27,8 +28,16 @@ pub fn get_default_headers() -> HeaderMap {
     headers
 }
 
-pub fn get_vault_request_headers(session_key: &[u8], verb: &str, uri: &str) -> Result<HeaderMap> {
+pub fn get_vault_request_headers(session_key: &[u8], verb: &str, host: &str, path: &str) -> Result<HeaderMap> {
+
+    let uri = format!("{}{}", host, path);
+
     let mut headers = get_default_headers();
+
+    let host_header_value = HeaderValue::from_str(host)
+        .map_err(|error| VaultError::Internal(error.to_string()))?;
+
+    headers.insert(HOST, host_header_value);
 
     let timestamp = get_current_time_to_string()?;
 
@@ -38,7 +47,7 @@ pub fn get_vault_request_headers(session_key: &[u8], verb: &str, uri: &str) -> R
 
     headers.insert(X_TIMESTAMP, timestamp_header_value);
 
-    let signature = create_signature(verb, uri, &timestamp, session_key)?;
+    let signature = create_signature(verb, &uri, &timestamp, session_key)?;
 
     let mut signature_header_value = HeaderValue::from_str(&hex::encode(signature))
         .map_err(|error| VaultError::Internal(error.to_string()))?;
