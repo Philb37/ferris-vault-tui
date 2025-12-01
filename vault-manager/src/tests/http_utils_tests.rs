@@ -32,6 +32,7 @@ fn vault_headers_should_contain_timestamp_signature_as_sensitive() {
 
     let content_type_value = "application/octet-stream";
     let session_key = "session_key".as_bytes();
+    let verb = "GET";
     let uri = "uri";
 
     let duration = Duration::from_millis(1763127134822);
@@ -41,7 +42,7 @@ fn vault_headers_should_contain_timestamp_signature_as_sensitive() {
         .as_secs()
         .to_string();
 
-    let raw_signature = format!("{}|{}|{}", "GET", uri, timestamp);
+    let raw_signature = format!("{}|{}|{}", verb, uri, timestamp);
 
     let mut mac = HmacSha512::new_from_slice(session_key).unwrap();
     mac.update(raw_signature.as_bytes());
@@ -50,7 +51,7 @@ fn vault_headers_should_contain_timestamp_signature_as_sensitive() {
 
     // A-ct
 
-    let headers = get_vault_request_headers(session_key, uri).unwrap();
+    let headers = get_vault_request_headers(session_key, verb, uri).unwrap();
 
     // A-ssert
 

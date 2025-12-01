@@ -1,13 +1,8 @@
-use reqwest::{
-    header::{HeaderMap, HeaderValue},
-};
-use hmac::{Hmac, Mac};
-use sha2::Sha512;
-use crate::{
-    constants::GET,
-    Result
-};
+use crate::Result;
 use app_core::vault::vault_error::VaultError;
+use hmac::{Hmac, Mac};
+use reqwest::header::{HeaderMap, HeaderValue};
+use sha2::Sha512;
 
 #[cfg(test)]
 use mock_instant::global::{SystemTime, UNIX_EPOCH};
@@ -32,21 +27,21 @@ pub fn get_default_headers() -> HeaderMap {
     headers
 }
 
-pub fn get_vault_request_headers(session_key: &[u8], uri: &str) -> Result<HeaderMap> {
+pub fn get_vault_request_headers(session_key: &[u8], verb: &str, uri: &str) -> Result<HeaderMap> {
     let mut headers = get_default_headers();
 
     let timestamp = get_current_time_to_string()?;
 
-    let mut timestamp_header_value =
-        HeaderValue::from_str(&timestamp).map_err(|error| VaultError::Internal(error.to_string()))?;
+    let mut timestamp_header_value = HeaderValue::from_str(&timestamp)
+        .map_err(|error| VaultError::Internal(error.to_string()))?;
     timestamp_header_value.set_sensitive(true);
 
     headers.insert(X_TIMESTAMP, timestamp_header_value);
 
-    let signature = create_signature(uri, &timestamp, session_key)?;
+    let signature = create_signature(verb, uri, &timestamp, session_key)?;
 
-    let mut signature_header_value =
-        HeaderValue::from_str(&hex::encode(signature)).map_err(|error| VaultError::Internal(error.to_string()))?;
+    let mut signature_header_value = HeaderValue::from_str(&hex::encode(signature))
+        .map_err(|error| VaultError::Internal(error.to_string()))?;
     signature_header_value.set_sensitive(true);
 
     headers.insert(X_SIGNATURE, signature_header_value);
@@ -55,7 +50,6 @@ pub fn get_vault_request_headers(session_key: &[u8], uri: &str) -> Result<Header
 }
 
 pub fn construct_body(username: &str, message: &[u8]) -> Vec<u8> {
-
     let mut body = Vec::new();
     body.extend_from_slice(username.as_bytes());
     body.extend_from_slice(SEPARATOR.as_bytes());
@@ -64,7 +58,6 @@ pub fn construct_body(username: &str, message: &[u8]) -> Vec<u8> {
 }
 
 fn get_current_time_to_string() -> Result<String> {
-
     let timestamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map_err(|error| VaultError::Internal(error.to_string()))?
@@ -73,13 +66,11 @@ fn get_current_time_to_string() -> Result<String> {
     Ok(timestamp.to_string())
 }
 
-fn create_signature(uri: &str, timestamp: &str, session_key: &[u8]) -> Result<Vec<u8>> {
+fn create_signature(verb: &str, uri: &str, timestamp: &str, session_key: &[u8]) -> Result<Vec<u8>> {
+    let raw_signature = format!("{}|{}|{}", verb, uri, timestamp);
 
-    let raw_signature = format!("{}|{}|{}", GET, uri, timestamp);
-
-    let mut mac =
-        HmacSha512::new_from_slice(session_key)
-            .map_err(|error| VaultError::Internal(error.to_string()))?;
+    let mut mac = HmacSha512::new_from_slice(session_key)
+        .map_err(|error| VaultError::Internal(error.to_string()))?;
 
     mac.update(raw_signature.as_bytes());
 
