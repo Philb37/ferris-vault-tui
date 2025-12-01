@@ -14,7 +14,7 @@ use crate::{
     Result,
     constants::*,
     error_utils::{to_exchange_failed_vault_error, to_internal_vault_error},
-    http_utils::{construct_body, get_default_headers, get_vault_request_headers},
+    http_utils::{get_opaque_headers, get_vault_request_headers},
     opaque_vault_manager::StandardCipherSuite,
 };
 use app_core::vault::vault_error::VaultError;
@@ -143,19 +143,15 @@ impl OpaqueApi {
             return Err(VaultError::NotLoggedIn(NO_SESSION_AFTER_LOGIN.to_string()));
         };
 
-        let headers = get_vault_request_headers(&session.session_key, verb, &self.server_url, VAULT)?;
+        let headers =
+            get_vault_request_headers(&session.session_key, verb, &self.server_url, VAULT)?;
 
         let vault_response =
             self.web_server_request(uri, verb, content, headers, Some(&session.session_token))?;
 
         let vault_reponse_bytes = vault_response.bytes().map_err(to_internal_vault_error)?;
 
-        let body = match vault_reponse_bytes.to_vec() {
-            body if body.len() > 0 => Some(body),
-            _ => None,
-        };
-
-        Ok(body)
+        Ok(Some(vault_reponse_bytes.to_vec()))
     }
 }
 
@@ -168,11 +164,13 @@ impl Api for OpaqueApi {
         let registration_response = self.web_server_request(
             format!("{}{}", &self.server_url, OPAQUE_REGISTRATION_START),
             POST,
-            Some(construct_body(
-                username,
-                &client_registration_start_result.message.serialize(),
-            )),
-            get_default_headers(),
+            Some(
+                client_registration_start_result
+                    .message
+                    .serialize()
+                    .to_vec(),
+            ),
+            get_opaque_headers(username)?,
             None,
         )?;
 
@@ -194,11 +192,13 @@ impl Api for OpaqueApi {
         let _ = self.web_server_request(
             format!("{}{}", &self.server_url, OPAQUE_REGISTRATION_FINISH),
             POST,
-            Some(construct_body(
-                username,
-                &client_registration_finish_result.message.serialize(),
-            )),
-            get_default_headers(),
+            Some(
+                client_registration_finish_result
+                    .message
+                    .serialize()
+                    .to_vec(),
+            ),
+            get_opaque_headers(username)?,
             None,
         )?;
 
@@ -213,11 +213,8 @@ impl Api for OpaqueApi {
         let login_response = self.web_server_request(
             format!("{}{}", &self.server_url, OPAQUE_LOGIN_START),
             POST,
-            Some(construct_body(
-                username,
-                &client_login_start_result.message.serialize(),
-            )),
-            get_default_headers(),
+            Some(client_login_start_result.message.serialize().to_vec()),
+            get_opaque_headers(username)?,
             None,
         )?;
 
@@ -235,11 +232,8 @@ impl Api for OpaqueApi {
         let _ = self.web_server_request(
             format!("{}{}", &self.server_url, OPAQUE_LOGIN_FINISH),
             POST,
-            Some(construct_body(
-                username,
-                &client_login_finish_result.message.serialize(),
-            )),
-            get_default_headers(),
+            Some(client_login_finish_result.message.serialize().to_vec()),
+            get_opaque_headers(username)?,
             None,
         )?;
 

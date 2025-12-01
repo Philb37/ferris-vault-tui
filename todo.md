@@ -22,3 +22,5 @@
 
 - [ ] Replace A-ssuming, A-ction, A-ssert by A-rrange, A-ct, A-ssert
 - [ ] Create rust docs
+- [ ] Incoporate more lifetimes
+- [ ] Remove unwraps

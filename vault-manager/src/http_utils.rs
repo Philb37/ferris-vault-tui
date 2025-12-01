@@ -15,27 +15,34 @@ const CONTENT_TYPE: &'static str = "Content-Type";
 const X_TIMESTAMP: &'static str = "X-Timestamp";
 const HOST: &'static str = "Host";
 const X_SIGNATURE: &'static str = "X-Signature";
-const SEPARATOR: &'static str = ";";
+const X_USERNAME: &'static str = "X-Username";
 
 pub type HmacSha512 = Hmac<Sha512>;
 
-pub fn get_default_headers() -> HeaderMap {
-    let mut headers = HeaderMap::new();
-    headers.insert(
-        CONTENT_TYPE,
-        HeaderValue::from_static(APPLICATION_OCTET_STREAM),
-    );
-    headers
+pub fn get_opaque_headers(username: &str) -> Result<HeaderMap> {
+    let mut headers = get_default_headers();
+
+    let mut username_header_value =
+        HeaderValue::from_str(username).map_err(|error| VaultError::Internal(error.to_string()))?;
+    username_header_value.set_sensitive(true);
+
+    headers.insert(X_USERNAME, username_header_value);
+
+    Ok(headers)
 }
 
-pub fn get_vault_request_headers(session_key: &[u8], verb: &str, host: &str, path: &str) -> Result<HeaderMap> {
-
+pub fn get_vault_request_headers(
+    session_key: &[u8],
+    verb: &str,
+    host: &str,
+    path: &str,
+) -> Result<HeaderMap> {
     let uri = format!("{}{}", host, path);
 
     let mut headers = get_default_headers();
 
-    let host_header_value = HeaderValue::from_str(host)
-        .map_err(|error| VaultError::Internal(error.to_string()))?;
+    let host_header_value =
+        HeaderValue::from_str(host).map_err(|error| VaultError::Internal(error.to_string()))?;
 
     headers.insert(HOST, host_header_value);
 
@@ -58,12 +65,13 @@ pub fn get_vault_request_headers(session_key: &[u8], verb: &str, host: &str, pat
     Ok(headers)
 }
 
-pub fn construct_body(username: &str, message: &[u8]) -> Vec<u8> {
-    let mut body = Vec::new();
-    body.extend_from_slice(username.as_bytes());
-    body.extend_from_slice(SEPARATOR.as_bytes());
-    body.extend_from_slice(message);
-    body
+fn get_default_headers() -> HeaderMap {
+    let mut headers = HeaderMap::new();
+    headers.insert(
+        CONTENT_TYPE,
+        HeaderValue::from_static(APPLICATION_OCTET_STREAM),
+    );
+    headers
 }
 
 fn get_current_time_to_string() -> Result<String> {

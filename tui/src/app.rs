@@ -257,6 +257,12 @@ impl App {
                 KeyCode::Char('a') => {
                     self.update_state_screen(CurrentScreen::Entry, InputMode::CreatingEntry)
                 }
+                KeyCode::Char('s') => match &self.vault_logged_code {
+                    Some(vault_logged_core) => vault_logged_core.save_vault().unwrap(),
+                    None => {
+                        panic!("Internal error, shouldn't call vault logged core at this time.")
+                    }
+                },
                 KeyCode::Up => self.previous_entry(),
                 KeyCode::Down => self.next_entry(),
                 _ => {}
@@ -476,6 +482,8 @@ impl App {
             "<C>".blue().bold(),
             " Add entry ".into(),
             "<A>".blue().bold(),
+            " Save vault ".into(),
+            "<S>".blue().bold(),
             " Quit ".into(),
             "<Q> ".blue().bold(),
         ]);

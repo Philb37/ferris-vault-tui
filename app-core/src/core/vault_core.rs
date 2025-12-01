@@ -77,9 +77,12 @@ impl<VM: VaultManager, PG: PasswordGenerator, NKC: NoKeyCipher> Core<VM, PG, NKC
         let cryptography = NKC::create_cipher_from_key(crypted_vault.encryption_key.as_bytes())
             .map_err(|error| CoreError::CryptographyError(error.to_string()))?;
 
-        let uncrypted_vault = cryptography
-            .decrypt(&crypted_vault.content)
-            .map_err(|error| CoreError::CryptographyError(error.to_string()))?;
+        let uncrypted_vault = match &crypted_vault.content.is_empty() {
+            true => UncryptedVault::new(),
+            false => cryptography
+                .decrypt(&crypted_vault.content)
+                .map_err(|error| CoreError::CryptographyError(error.to_string()))?,
+        };
 
         Ok(LoggedCoreService {
             vault_manager: self.vault_manager,

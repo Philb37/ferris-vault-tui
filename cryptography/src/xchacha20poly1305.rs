@@ -25,6 +25,7 @@ impl NoKeyCipher for NoKeyXChaCha20Poly1305 {
 
     /// Used in order to convert the key from 64 to 32 bytes
     fn create_cipher_from_key(key: &[u8]) -> Result<Self::Crypto> {
+
         if key.len() == 32 {
             return Ok(XChaCha20Poly1305 {
                 key: GenericArray::<u8, U32>::clone_from_slice(key),
@@ -36,7 +37,7 @@ impl NoKeyCipher for NoKeyXChaCha20Poly1305 {
 
         hkdf.expand(b"xchacha20-poly1305-key", &mut derived)
             .map_err(|error| CryptographyError::DerivationError(error.to_string()))?;
-
+        
         Ok(XChaCha20Poly1305 { key: derived })
     }
 }

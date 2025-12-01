@@ -219,49 +219,6 @@ fn should_get_vault() {
 }
 
 #[test]
-fn should_not_find_vault() {
-
-    // A-rrange
-
-    let client_login_finish_result = login();
-
-    let expected = vec![];
-
-    let mut server = Server::new();
-
-    let _ = server
-        .mock(POST, OPAQUE_LOGIN_FINISH)
-        .with_status(200)
-        .create();
-
-    let vault_mock = server
-        .mock(GET, VAULT)
-        .with_status(200)
-        .with_header("Content-Type", "application/octet-stream")
-        .with_body(&expected)
-        .create();
-
-    let mut opaque_api = OpaqueApi::new(server.url());
-
-    opaque_api.finish_server_login(USERNAME, &client_login_finish_result).unwrap();
-
-    // A-ct
-
-    let result = opaque_api.get_vault();
-
-    // A-ssert
-
-    assert!(result.is_err());
-
-    match result {
-        Err(VaultError::NotFound) => assert!(true),
-        _ => panic!("Test result should not find a vault.")
-    }
-
-    vault_mock.assert();
-}
-
-#[test]
 fn should_save_vault() {
 
     // A-rrange
